@@ -10,57 +10,98 @@
 <meta property="og:description" content="Deux relances automatiques pour les petites boutiques Shopify et WooCommerce.">
 <meta name="theme-color" content="#0f3d33">
 <style>
-  :root { --encre:#0f3d33; --accent:#e8590c; --papier:#faf7f2; --texte:#1c1c1c; --gris:#5f6b66; }
+  :root { --encre:#0f3d33; --accent:#e8590c; --papier:#faf7f2; --texte:#1c1c1c; --gris:#5f6b66; --trait:#d9d3c8; }
   * { box-sizing:border-box; margin:0; padding:0; }
   body { background:var(--papier); color:var(--texte); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; font-size:18px; line-height:1.5; }
-  main { max-width:640px; margin:0 auto; padding:32px 20px 48px; }
+  main { max-width:640px; margin:0 auto; padding:28px 20px 48px; }
   .marque { font-weight:700; letter-spacing:.04em; text-transform:uppercase; font-size:14px; color:var(--encre); }
-  h1 { font-family:Georgia,"Times New Roman",serif; font-size:36px; line-height:1.12; color:var(--encre); margin:20px 0 16px; }
-  .sous-titre { color:var(--gris); margin-bottom:28px; }
-  .bouton { display:block; width:100%; text-align:center; background:var(--accent); color:#fff; font-weight:700; font-size:19px; padding:16px 20px; border-radius:6px; text-decoration:none; min-height:56px; }
+  h1 { font-family:Georgia,"Times New Roman",serif; font-size:30px; line-height:1.15; color:var(--encre); margin:16px 0 14px; }
+  h2 { font-family:Georgia,serif; font-size:26px; line-height:1.2; color:var(--encre); margin-bottom:16px; }
+  .sous-titre { color:var(--gris); margin-bottom:24px; }
+  .bouton { display:block; width:100%; text-align:center; background:var(--accent); color:#fff; font-weight:700; font-size:19px; padding:16px 20px; border-radius:6px; text-decoration:none; min-height:56px; border:0; cursor:pointer; font-family:inherit; }
+  .reponse { display:block; width:100%; text-align:left; background:#fff; color:var(--encre); font-weight:600; font-size:18px; padding:16px 18px; border-radius:6px; border:2px solid var(--trait); min-height:56px; margin-bottom:12px; cursor:pointer; font-family:inherit; }
+  .reponse:active { border-color:var(--accent); }
   .note { text-align:center; color:var(--gris); font-size:14px; margin-top:10px; }
-  .douleur { background:var(--encre); color:#fff; padding:24px 20px; border-radius:6px; margin:40px 0; }
-  .douleur .chiffre { font-family:Georgia,serif; font-size:44px; font-weight:700; color:#ffd8b8; line-height:1; }
+  .douleur { background:var(--encre); color:#fff; padding:24px 20px; border-radius:6px; margin:36px 0; }
+  .douleur .chiffre { font-family:Georgia,serif; font-size:40px; font-weight:700; color:#ffd8b8; line-height:1.05; }
   .douleur p { margin-top:10px; }
   .douleur small { display:block; margin-top:14px; font-size:13px; opacity:.8; }
-  h2 { font-family:Georgia,serif; font-size:26px; color:var(--encre); margin-bottom:16px; }
   ul { list-style:none; }
-  li { padding:16px 0; border-top:1px solid #d9d3c8; }
+  li { padding:16px 0; border-top:1px solid var(--trait); }
   li strong { display:block; color:var(--encre); font-size:19px; margin-bottom:2px; }
   li span { color:var(--gris); font-size:16px; }
-  .final { margin-top:40px; }
+  .barre { height:8px; background:var(--trait); border-radius:4px; margin:14px 0 8px; overflow:hidden; }
+  .barre i { display:block; height:100%; background:var(--accent); transition:width .25s; }
+  .etape { color:var(--gris); font-size:14px; margin-bottom:22px; }
+  .retour { background:none; border:0; color:var(--gris); font-size:15px; margin-top:12px; cursor:pointer; font-family:inherit; text-decoration:underline; }
+  .grand { font-family:Georgia,serif; font-size:48px; font-weight:700; color:var(--accent); line-height:1.05; }
+  .bloc { background:#fff; border:1px solid var(--trait); border-radius:6px; padding:18px; margin:18px 0; }
+  .bloc h3 { font-size:15px; text-transform:uppercase; letter-spacing:.04em; color:var(--gris); margin-bottom:8px; }
+  .mail { font-size:16px; white-space:pre-line; }
+  .verrou { position:relative; }
+  .verrou .flou { filter:blur(5px); user-select:none; pointer-events:none; }
+  .verrou .cadenas { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--encre); text-align:center; padding:12px; }
   footer { margin-top:40px; font-size:13px; color:var(--gris); text-align:center; }
 </style>
 </head>
 <body>
-<main>
-  <div class="marque">Panier Perdu</div>
-  <h1>Récupère les paniers abandonnés de ta boutique, sans payer le prix des grosses solutions.</h1>
-  <p class="sous-titre">Pour les boutiques Shopify et WooCommerce qui font quelques dizaines de commandes par mois.</p>
-  <a class="bouton" href="#commencer">Commencer, c'est gratuit</a>
-  <p class="note">Aucune carte bancaire demandée pour commencer.</p>
+<main id="app"></main>
+<script>
+var QUESTIONS = [
+  { t: "Combien de commandes ta boutique reçoit-elle par mois ?",
+    o: [["Moins de 20", 15], ["20 à 50", 35], ["50 à 100", 75], ["Plus de 100", 120]] },
+  { t: "Quel est ton panier moyen ?",
+    o: [["Moins de 30 €", 25], ["30 à 60 €", 45], ["60 à 100 €", 80], ["Plus de 100 €", 120]] },
+  { t: "Que fais-tu aujourd'hui pour les paniers abandonnés ?",
+    o: [["Rien du tout", 0], ["Je relance à la main, quand j'y pense", 1], ["J'ai déjà un e-mail automatique", 2]] }
+];
+var PHRASE_RELANCE = [
+  "Aujourd'hui, personne ne relance ces paniers.",
+  "Tu relances à la main, quand tu y penses : la plupart des paniers t'échappent quand même.",
+  "Tu as déjà un e-mail automatique : avec deux relances espacées et le suivi en euros, tu irais plus loin."
+];
+var etat = { q: 0, rep: [] };
+var app = document.getElementById("app");
 
-  <section class="douleur">
-    <div class="chiffre">7 paniers sur 10</div>
-    <p>sont remplis puis abandonnés. Une boutique à 30 commandes par mois laisse donc partir environ 70 paniers. À 60 € le panier, cela représente 4 200 € de ventes qui s'en vont, sans que personne ne les relance.</p>
-    <small>Exemple chiffré à partir de la moyenne mondiale d'abandon de panier (environ 70 %, étude Baymard Institute). Tes chiffres réels dépendent de ta boutique.</small>
-  </section>
+function euros(n) { return Math.round(n).toLocaleString("fr-FR") + " €"; }
 
-  <section>
-    <h2>Ce que tu obtiens</h2>
-    <ul>
-      <li><strong>Deux relances écrites, espacées</strong><span>La première rappelle le panier, la seconde arrive plus tard. Chacune est personnalisée avec les produits oubliés.</span></li>
-      <li><strong>Un code de réduction, si tu le veux</strong><span>Tu choisis d'en offrir un sur la seconde relance, ou de n'en offrir aucun.</span></li>
-      <li><strong>Un compteur en euros</strong><span>Tu vois exactement combien de chiffre d'affaires les relances ont ramené.</span></li>
-    </ul>
-  </section>
+function accueil() {
+  app.innerHTML =
+    '<div class="marque">Panier Perdu</div>' +
+    '<h1>Récupère les paniers abandonnés de ta boutique, sans payer le prix des grosses solutions.</h1>' +
+    '<p class="sous-titre">Pour les boutiques Shopify et WooCommerce qui font quelques dizaines de commandes par mois.</p>' +
+    '<button class="bouton" id="go">Commencer, c\'est gratuit</button>' +
+    '<p class="note">Aucune carte bancaire demandée pour commencer.</p>' +
+    '<section class="douleur"><div class="chiffre">7 paniers sur 10</div>' +
+    '<p>sont remplis puis abandonnés. Une boutique à 30 commandes par mois laisse donc partir environ 70 paniers. À 60 € le panier, cela représente 4 200 € de ventes qui s\'en vont, sans que personne ne les relance.</p>' +
+    '<small>Exemple chiffré à partir de la moyenne mondiale d\'abandon de panier (environ 70 %, étude Baymard Institute). Tes chiffres réels dépendent de ta boutique.</small></section>' +
+    '<h2>Ce que tu obtiens</h2><ul>' +
+    '<li><strong>Deux relances écrites, espacées</strong><span>La première rappelle le panier, la seconde arrive plus tard. Chacune est personnalisée avec les produits oubliés.</span></li>' +
+    '<li><strong>Un code de réduction, si tu le veux</strong><span>Tu choisis d\'en offrir un sur la seconde relance, ou de n\'en offrir aucun.</span></li>' +
+    '<li><strong>Un compteur en euros</strong><span>Tu vois exactement combien de chiffre d\'affaires les relances ont ramené.</span></li></ul>' +
+    '<div style="margin-top:32px"><button class="bouton" id="go2">Commencer, c\'est gratuit</button>' +
+    '<p class="note">Sans engagement, résiliable à tout moment.</p></div>' +
+    '<footer>© Panier Perdu</footer>';
+  document.getElementById("go").onclick = demarrer;
+  document.getElementById("go2").onclick = demarrer;
+  window.scrollTo(0, 0);
+}
 
-  <section class="final" id="commencer">
-    <a class="bouton" href="#commencer">Commencer, c'est gratuit</a>
-    <p class="note">Sans engagement, résiliable à tout moment.</p>
-  </section>
+function demarrer() { etat = { q: 0, rep: [] }; question(); }
 
-  <footer>© Panier Perdu</footer>
-</main>
-</body>
-</html>
+function question() {
+  var q = QUESTIONS[etat.q];
+  var pct = Math.round((etat.q / 3) * 100);
+  var html =
+    '<div class="marque">Panier Perdu</div>' +
+    '<div class="barre"><i style="width:' + pct + '%"></i></div>' +
+    '<p class="etape">Question ' + (etat.q + 1) + ' sur 3</p>' +
+    '<h2>' + q.t + '</h2>';
+  for (var i = 0; i < q.o.length; i++) {
+    html += '<button class="reponse" data-i="' + i + '">' + q.o[i][0] + '</button>';
+  }
+  html += '<button class="retour" id="retour">' + (etat.q === 0 ? "Retour à l'accueil" : "Question précédente") + '</button>';
+  app.innerHTML = html;
+  var boutons = app.querySelectorAll(".reponse");
+  for (var j = 0; j < boutons.length; j++) {
+    boutons[j].onclick =
