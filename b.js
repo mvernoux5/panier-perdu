@@ -33,8 +33,6 @@ function resultat() {
   window.scrollTo(0, 0);
 }
 
-function apercu() {
-  app.innerHTML =
-    '<div class="marque">Panier Perdu</div>' +
-    '<h2>Ta première relance est prête</h2>' +
-    '
+var s = document.createElement("script");
+s.src = "c.js";
+document.body.appendChild(s);
