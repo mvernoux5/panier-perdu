@@ -11,11 +11,15 @@ function apercu() {
     '<div class="cadenas">Verrouillée · avec un code de réduction facultatif</div></div>' +
     '<div class="bloc"><h3>Chiffre d\'affaires récupéré</h3><div class="grand" style="color:var(--gris)">— €</div>' +
     '<p class="note" style="text-align:left">Il se remplit dès que ta boutique est connectée.</p></div>' +
-    '<p class="note">L\'ouverture des comptes arrive très bientôt.</p>' +
+    '<button class="bouton" id="offre">Débloquer mes relances</button>' +
     '<button class="retour" id="accueil">Retour à l\'accueil</button>' +
     '<footer>© Panier Perdu</footer>';
   document.getElementById("accueil").onclick = accueil;
+  document.getElementById("offre").onclick = offre;
   window.scrollTo(0, 0);
 }
 
+var s = document.createElement("script");
+s.src = "d.js";
+document.body.appendChild(s);
 accueil();
