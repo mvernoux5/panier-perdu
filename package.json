@@ -1,0 +1,8 @@
+{
+  "name": "panier-perdu",
+  "private": true,
+  "dependencies": {
+    "stripe": "17.7.0",
+    "@supabase/supabase-js": "2.49.1"
+  }
+}
